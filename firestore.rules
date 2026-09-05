@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{document} {
+      allow read, write: if true;
+    }
+    match /timeLogs/{document} {
+      allow read, write: if true;
+    }
+    match /leaveRequests/{document} {
+      allow read, write: if true;
+    }
+    match /dmsDocuments/{document} {
+      allow read, write: if true;
+    }
+    match /dmsAuditLogs/{document} {
+      allow read, write: if true;
+    }
+    match /dailyTasks/{document} {
+      allow read, write: if true;
+    }
+    match /taskReports/{document} {
+      allow read, write: if true;
+    }
+    match /dealers/{document} {
+      allow read, write: if true;
+    }
+    match /clientAccounts/{document} {
+      allow read, write: if true;
+    }
+    match /connectedCompanies/{document} {
+      allow read, write: if true;
+    }
+    match /meetingNotes/{document} {
+      allow read, write: if true;
+    }
+    match /regularizationRequests/{document} {
+      allow read, write: if true;
+    }
+    match /regularizationAuditLogs/{document} {
+      allow read, write: if true;
+    }
+    match /leads/{document} {
+      allow read, write: if true;
+    }
+    match /crmLeads/{document} {
+      allow read, write: if true;
+    }
+    match /documents/{document} {
+      allow read, write: if true;
+    }
+    match /resignations/{document} {
+      allow read, write: if true;
+    }
+    match /payroll/{document} {
+      allow read, write: if true;
+    }
+    match /tickets/{document} {
+      allow read, write: if true;
+    }
+    match /expenses/{document} {
+      allow read, write: if true;
+    }
+    match /appNotifications/{document} {
+      allow read, write: if true;
+    }
+    match /activityLogs/{document} {
+      allow read, write: if true;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

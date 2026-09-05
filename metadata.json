@@ -1,0 +1,6 @@
+{
+  "name": "Click Camp Workspace",
+  "description": "Multi-role workspace application featuring Admin, HR, and Employee portals with IST time tracking, Leave Management, DMS Tracker, and CSV Payroll Attendance Reporting.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

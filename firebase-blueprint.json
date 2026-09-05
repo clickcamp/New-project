@@ -1,0 +1,271 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "description": "User accounts and profiles.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "firstName": "string",
+        "lastName": "string",
+        "role": "string",
+        "department": "string",
+        "status": "string",
+        "email": "string",
+        "password": "string",
+        "target": "number"
+      }
+    },
+    {
+      "name": "timeLogs",
+      "description": "Employee clock in and out logs.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "userId": "string",
+        "clockIn": "string",
+        "clockOut": "string",
+        "totalHours": "number"
+      }
+    },
+    {
+      "name": "leaveRequests",
+      "description": "Employee leave requests.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "userId": "string",
+        "startDate": "string",
+        "endDate": "string",
+        "reason": "string",
+        "status": "string"
+      }
+    },
+    {
+      "name": "dmsDocuments",
+      "description": "Document management system files.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "title": "string",
+        "filename": "string",
+        "category": "string",
+        "uploadedBy": "string",
+        "uploadDate": "string",
+        "version": "number",
+        "path": "string"
+      }
+    },
+    {
+      "name": "dmsAuditLogs",
+      "description": "Audit logs for document management.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "action": "string",
+        "docId": "string",
+        "performedBy": "string",
+        "timestamp": "string"
+      }
+    },
+    {
+      "name": "dailyTasks",
+      "description": "Daily tasks set by HR.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "date": "string",
+        "title": "string",
+        "description": "string",
+        "targetCount": "number",
+        "createdBy": "string",
+        "createdAt": "string"
+      }
+    },
+    {
+      "name": "taskReports",
+      "description": "Task reports submitted by employees.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "taskId": "string",
+        "userId": "string",
+        "userName": "string",
+        "date": "string",
+        "completedCount": "number",
+        "notes": "string",
+        "submittedAt": "string"
+      }
+    },
+    {
+      "name": "dealers",
+      "description": "Dealers and merchants tracked by employees.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "businessName": "string",
+        "ownerName": "string",
+        "contactNumber": "string",
+        "location": "string",
+        "status": "string",
+        "assignedTo": "string",
+        "createdAt": "string"
+      }
+    },
+    {
+      "name": "clientAccounts",
+      "description": "Client account openings logged by employees.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "clientName": "string",
+        "platform": "string",
+        "status": "string",
+        "submittedBy": "string",
+        "submittedByName": "string",
+        "submittedAt": "string"
+      }
+    },
+    {
+      "name": "connectedCompanies",
+      "description": "Companies connected for tracking targets.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "name": "string",
+        "addedBy": "string",
+        "createdAt": "string"
+      }
+    },
+    {
+      "name": "meetingNotes",
+      "description": "Daily meeting huddles and updates.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "title": "string",
+        "content": "string",
+        "date": "string",
+        "authorId": "string",
+        "authorName": "string",
+        "readReceipts": "array"
+      }
+    },
+    {
+      "name": "regularizationRequests",
+      "description": "Employee regularization requests.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "userId": "string",
+        "date": "string",
+        "reason": "string",
+        "status": "string",
+        "submittedAt": "string",
+        "resolvedAt": "string",
+        "resolvedBy": "string"
+      }
+    },
+    {
+      "name": "regularizationAuditLogs",
+      "description": "Audit logs for regularizations.",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "requestId": "string",
+        "userId": "string",
+        "date": "string",
+        "action": "string",
+        "performedBy": "string",
+        "performedByName": "string",
+        "timestamp": "string"
+      }
+    },
+    {
+      "name": "leads",
+      "description": "Lead Pipeline / Mini-CRM",
+      "securityRules": {
+        "read": "true",
+        "create": "true",
+        "update": "true",
+        "delete": "true"
+      },
+      "documentSchema": {
+        "id": "string",
+        "clientName": "string",
+        "phone": "string",
+        "status": "string",
+        "assignedTo": "string",
+        "assignedToName": "string",
+        "createdAt": "string",
+        "updatedAt": "string",
+        "notes": "string"
+      }
+    }
+  ]
+}
