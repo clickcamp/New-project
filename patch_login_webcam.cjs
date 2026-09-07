@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+const fs = require('fs');
+
+const content = `import React, { useState, useEffect, useRef } from "react";
 import { User } from "../types";
 import { ShieldCheck, Lock, ArrowRight, User as UserIcon, Camera, CheckCircle2 } from "lucide-react";
 import * as faceapi from '@vladmandic/face-api';
@@ -390,3 +392,6 @@ export function LoginPortal({ users, onLogin, onBack }: LoginPortalProps) {
     </div>
   );
 }
+`;
+fs.writeFileSync('src/components/LoginPortal.tsx', content);
+console.log("LoginPortal.tsx completely updated.");

@@ -28,6 +28,7 @@ import { ActivityFeedWidget } from "./ActivityFeedWidget";
 import { TargetDashboardModule } from "./TargetDashboardModule";
 import { AttendanceCalendarModule } from "./AttendanceCalendarModule";
 import { CRMModule } from "./CRMModule";
+import { BiometricApprovalModule } from "./BiometricApprovalModule";
 import { LeaderboardModule, IncentiveDashboard } from "./SalesMetricsModule";
 import { ResourceLibraryModule } from "./ResourceLibraryModule";
 import { HROffboarding } from "./OffboardingModule";
@@ -729,6 +730,7 @@ export function AdminDashboard({ currentUser, refreshUsers }: { currentUser: Use
         </div>
       </div>
 
+      <div className="mb-6"><BiometricApprovalModule /></div>
       {/* ClickCamp Technologies Specific Modules */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <LeaderboardModule currentUser={currentUser} users={users} />

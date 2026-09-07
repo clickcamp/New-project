@@ -7,10 +7,233 @@ import { randomUUID } from "crypto";
 import multer from "multer";
 import fs from "fs";
 
+
+
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, doc, updateDoc, getDoc } from "firebase/firestore";
+import { OTP } from "otplib";
+const authenticator = new OTP();
+
+const fbConfig = JSON.parse(fs.readFileSync('firebase-applet-config.json', 'utf8'));
+const fbApp = initializeApp(fbConfig);
+const db = getFirestore(fbApp, fbConfig.firestoreDatabaseId);
+
+function euclideanDistance(desc1, desc2) {
+  return Math.sqrt(desc1.reduce((sum, val, i) => sum + Math.pow(val - desc2[i], 2), 0));
+}
+
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+import { generateRegistrationOptions, verifyRegistrationResponse, generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
+const rpName = 'ClickCamp Workspace';
+const getRpID = (req) => req.hostname;
+const getExpectedOrigin = (req) => `${req.protocol}://${req.get('host')}`;
+const expectedOrigin = [
+  'http://localhost:3000', 
+  'https://ais-dev-lvfvxm2hdgwh55boq2xmrr-314695820503.asia-southeast1.run.app', 
+  'https://ais-pre-lvfvxm2hdgwh55boq2xmrr-314695820503.asia-southeast1.run.app'
+];
+const userChallenges = new Map(); // userId -> challenge
+
+
+app.post('/api/biometric/register', async (req, res) => {
+  try {
+    const { userId, descriptor, userEmail } = req.body;
+    const secret = authenticator.generateSecret();
+    const otpauthUrl = authenticator.generateURI({ issuer: 'ClickCamp', label: userEmail, secret });
+    
+    await updateDoc(doc(db, "users", userId), {
+      face_status: 'pending',
+      face_descriptor: descriptor,
+      totp_secret: secret
+    });
+    
+    res.json({ secret, otpauthUrl });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/biometric/approve', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    await updateDoc(doc(db, "users", userId), {
+      face_status: 'active'
+    });
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/biometric/login', async (req, res) => {
+  try {
+    const { descriptor } = req.body;
+    const usersSnap = await getDocs(collection(db, "users"));
+    let bestMatch = null;
+    let minDistance = 0.5; // Threshold
+    
+    usersSnap.forEach(uDoc => {
+      const data = uDoc.data();
+      if (data.face_status === 'active' && data.face_descriptor) {
+        const distance = euclideanDistance(descriptor, data.face_descriptor);
+        if (distance < minDistance) {
+          minDistance = distance;
+          bestMatch = { id: uDoc.id, ...data };
+        }
+      }
+    });
+    
+    if (bestMatch) {
+      res.json({ require2FA: true, tempUserId: bestMatch.id });
+    } else {
+      res.status(401).json({ error: "Face not recognized or pending approval." });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/biometric/verify-2fa', async (req, res) => {
+  try {
+    const { tempUserId, token } = req.body;
+    const uDoc = await getDoc(doc(db, "users", tempUserId));
+    if (!uDoc.exists()) return res.status(404).json({ error: "User not found" });
+    
+    const data = uDoc.data();
+    const result = await authenticator.verify({ token, secret: data.totp_secret });
+    const isValid = result.valid;
+    
+    if (isValid) {
+      res.json({ verified: true, user: { id: uDoc.id, ...data } });
+    } else {
+      res.status(401).json({ error: "Invalid 2FA token" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/webauthn/generate-registration-options', async (req, res) => {
+  const { userId, userEmail } = req.body;
+  const options = await generateRegistrationOptions({
+    rpName,
+    rpID: getRpID(req),
+    userID: new Uint8Array(Buffer.from(userId, "utf-8")),
+    userName: userEmail,
+    attestationType: 'none',
+    authenticatorSelection: {
+      residentKey: 'discouraged',
+      userVerification: 'preferred',
+    },
+  });
+  userChallenges.set(userId, options.challenge);
+  res.json(options);
+});
+
+app.post('/api/webauthn/verify-registration', async (req, res) => {
+  const { userId, body } = req.body;
+  const expectedChallenge = userChallenges.get(userId);
+  if (!expectedChallenge) return res.status(400).json({ error: "Challenge not found" });
+
+  try {
+    const verification = await verifyRegistrationResponse({
+      response: body,
+      expectedChallenge,
+      expectedOrigin: getExpectedOrigin(req),
+      expectedRPID: getRpID(req),
+    });
+    const { verified, registrationInfo } = verification;
+    if (verified && registrationInfo) {
+      res.json({ verified: true, registrationInfo });
+    } else {
+      res.status(400).json({ error: "Verification failed" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.post('/api/webauthn/generate-authentication-options', async (req, res) => {
+  const { userId, allowCredentials } = req.body;
+  const options = await generateAuthenticationOptions({
+    rpID: getRpID(req),
+    allowCredentials: allowCredentials.map(cred => ({
+      id: cred.credentialID, // base64url expected
+      type: 'public-key',
+      transports: cred.transports,
+    })),
+    userVerification: 'preferred',
+  });
+  userChallenges.set(userId, options.challenge);
+  res.json(options);
+});
+
+app.post('/api/webauthn/verify-authentication', async (req, res) => {
+  const { userId, body, authenticator } = req.body;
+  // authenticator = { credentialID, credentialPublicKey, counter, transports }
+  const expectedChallenge = userChallenges.get(userId);
+  if (!expectedChallenge) return res.status(400).json({ error: "Challenge not found" });
+
+  // The client passes back the stored public key buffer (base64url)
+  // Let's decode it inside simplewebauthn or verifyAuthenticationResponse will do it.
+  try {
+    const verification = await verifyAuthenticationResponse({
+      response: body,
+      expectedChallenge,
+      expectedOrigin: getExpectedOrigin(req),
+      expectedRPID: getRpID(req),
+      credential: {
+         // simplewebauthn expects uint8arrays, so we must parse the base64 string sent by the client
+         id: authenticator.credentialID,
+         publicKey: new Uint8Array(Buffer.from(authenticator.credentialPublicKey, 'base64')),
+         counter: authenticator.counter,
+      },
+    });
+
+    if (verification.verified) {
+      // Return updated counter so client can update DB
+      res.json({ verified: true, authenticationInfo: verification.authenticationInfo });
+    } else {
+      res.status(400).json({ error: "Verification failed" });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+import bcrypt from 'bcryptjs';
+
+app.post('/api/admin/login', async (req, res) => {
+  const { userId, password } = req.body;
+  if (!userId || !password) return res.status(400).json({ error: "Missing fields" });
+  try {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (!userDoc.exists()) return res.status(404).json({ error: "User not found" });
+    const userData = userDoc.data();
+    
+    let storedHash = userData.password_hash;
+    if (!storedHash && userData.password) {
+       storedHash = await bcrypt.hash(userData.password, 10);
+       await updateDoc(doc(db, "users", userId), { password_hash: storedHash });
+    }
+    
+    if (!storedHash) return res.status(401).json({ error: "Invalid password" });
+    
+    const isValid = await bcrypt.compare(password, storedHash);
+    if (isValid) {
+      res.json({ success: true, token: 'admin-jwt-token-mock' });
+    } else {
+      res.status(401).json({ error: "Invalid password" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 
 // Configure storage for documents
 const uploadDir = path.join(process.cwd(), 'uploads', 'documents');

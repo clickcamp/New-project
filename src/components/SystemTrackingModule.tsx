@@ -184,7 +184,7 @@ export function SystemTrackingModule({ users, currentUser }: { users: User[], cu
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <p className="text-[10px] text-gray-500 text-center mt-2">Red indicates high utilization (> 50 active items)</p>
+              <p className="text-[10px] text-gray-500 text-center mt-2">Red indicates high utilization (&gt; 50 active items)</p>
             </div>
           </div>
 

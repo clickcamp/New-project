@@ -225,3 +225,11 @@ export interface ActivityLog {
   timestamp: string;
   details?: string;
 }
+
+export interface WebAuthnCredential {
+  id: string; // credential_id
+  userId: string;
+  publicKey: string; // base64 or Uint8Array
+  counter: number;
+  transports?: string[];
+}

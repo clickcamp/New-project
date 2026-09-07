@@ -67,6 +67,9 @@ service cloud.firestore {
     match /activityLogs/{document} {
       allow read, write: if true;
     }
+    match /webAuthnCredentials/{document} {
+      allow read, write: if true;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

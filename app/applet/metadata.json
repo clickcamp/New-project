@@ -1,0 +1,11 @@
+{
+  "name": "ClickCamp Workspace",
+  "description": "Biometric & Secure Workspace Authentication intranet",
+  "requestFramePermissions": [
+    "publickey-credentials-create",
+    "publickey-credentials-get"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
