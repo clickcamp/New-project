@@ -33,6 +33,7 @@ import { ResourceLibraryModule } from "./ResourceLibraryModule";
 import { HROffboarding } from "./OffboardingModule";
 import { PayrollModule } from "./PayrollModule";
 import { TicketingModule, ExpensesModule } from "./SupportModule";
+import { SystemTrackingModule } from "./SystemTrackingModule";
 
 export function AdminDashboard({ currentUser, refreshUsers }: { currentUser: User, refreshUsers: () => void }) {
   const [users, setUsers] = useState<User[]>([]);
