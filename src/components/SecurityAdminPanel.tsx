@@ -23,7 +23,14 @@ export function SecurityAdminPanel({ users }: SecurityAdminPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ targetUserId: userId })
       });
-      const data = await resp.json();
+      const contentType = resp.headers.get("content-type");
+      let data;
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await resp.json();
+      } else {
+        const text = await resp.text();
+        throw new Error(`Server error: ${text.substring(0, 50)}`);
+      }
       if (!resp.ok) throw new Error(data.error || 'Failed to setup 2FA');
       
       setQrCodeData({ userId, url: data.qrCodeData, secret: data.secret });
@@ -59,7 +66,14 @@ export function SecurityAdminPanel({ users }: SecurityAdminPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ targetUserId: userId })
       });
-      const data = await resp.json();
+      const contentType = resp.headers.get("content-type");
+      let data;
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await resp.json();
+      } else {
+        const text = await resp.text();
+        throw new Error(`Server error: ${text.substring(0, 50)}`);
+      }
       if (!resp.ok) throw new Error(data.error || 'Failed to disable 2FA');
       
       setSuccessMsg('2FA has been disabled for the user.');

@@ -36,7 +36,14 @@ export function LoginPortal({ users, onLogin, onBack }: LoginPortalProps) {
         body: JSON.stringify({ userId: selectedUserId, password })
       });
       
-      const data = await resp.json();
+      const contentType = resp.headers.get("content-type");
+      let data;
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await resp.json();
+      } else {
+        const text = await resp.text();
+        throw new Error(`Server error: ${text.substring(0, 50)}`);
+      }
       
       if (!resp.ok) {
         throw new Error(data.error || "Login failed");
@@ -65,7 +72,14 @@ export function LoginPortal({ users, onLogin, onBack }: LoginPortalProps) {
         body: JSON.stringify({ userId: selectedUserId, token: otp })
       });
       
-      const data = await resp.json();
+      const contentType = resp.headers.get("content-type");
+      let data;
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await resp.json();
+      } else {
+        const text = await resp.text();
+        throw new Error(`Server error: ${text.substring(0, 50)}`);
+      }
       
       if (!resp.ok) {
         throw new Error(data.error || "Invalid 2FA code");
