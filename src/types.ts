@@ -38,6 +38,8 @@ export interface User {
   department: string;
   password?: string;
   target?: number;
+  is_2fa_enabled?: boolean;
+  '2fa_secret'?: string;
 }
 
 export interface TimeLog {

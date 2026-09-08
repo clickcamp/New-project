@@ -27,8 +27,8 @@ import { OpsPerformanceWidget } from "./OpsPerformanceWidget";
 import { ActivityFeedWidget } from "./ActivityFeedWidget";
 import { TargetDashboardModule } from "./TargetDashboardModule";
 import { AttendanceCalendarModule } from "./AttendanceCalendarModule";
+import { SecurityAdminPanel } from "./SecurityAdminPanel";
 import { CRMModule } from "./CRMModule";
-import { BiometricApprovalModule } from "./BiometricApprovalModule";
 import { LeaderboardModule, IncentiveDashboard } from "./SalesMetricsModule";
 import { ResourceLibraryModule } from "./ResourceLibraryModule";
 import { HROffboarding } from "./OffboardingModule";
@@ -730,8 +730,7 @@ export function AdminDashboard({ currentUser, refreshUsers }: { currentUser: Use
         </div>
       </div>
 
-      <div className="mb-6"><BiometricApprovalModule /></div>
-      {/* ClickCamp Technologies Specific Modules */}
+            {/* ClickCamp Technologies Specific Modules */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <LeaderboardModule currentUser={currentUser} users={users} />
         <div className="space-y-6">
@@ -744,6 +743,7 @@ export function AdminDashboard({ currentUser, refreshUsers }: { currentUser: Use
       </div>
 
       <div className="mt-6">
+        <SecurityAdminPanel users={users} />
         <CRMModule currentUser={currentUser} />
       </div>
 
