@@ -99,7 +99,7 @@ app.post('/api/admin/2fa-setup', async (req, res) => {
     const userData = uDoc.data();
     const secret = authenticator.generateSecret();
     const userEmail = userData.email || 'user@clickcamp.site';
-    const otpauthUrl = authenticator.generateURI({ issuer: 'ClickCamp', label: userEmail, secret });
+    const otpauthUrl = authenticator.generateURI({ issuer: 'ClickCamp', account: userEmail, secret });
     
     await updateDoc(doc(db, "users", targetUserId), {
       is_2fa_enabled: true,
